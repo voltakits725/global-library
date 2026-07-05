@@ -185,11 +185,21 @@ onMounted(() => {
                 window.spamCache.add(spamKey);
                 setTimeout(() => window.spamCache.delete(spamKey), 5000); // Hapus dari cache setelah 5 detik
                 
-                new Notification(title, { 
-                  body: body,
-                  icon: data.bookCover || '/favicon.ico',
-                  requireInteraction: true
-                })
+                if ('serviceWorker' in navigator) {
+                  navigator.serviceWorker.ready.then(registration => {
+                    registration.showNotification(title, {
+                      body: body,
+                      icon: data.bookCover || '/favicon.ico',
+                      requireInteraction: true
+                    })
+                  })
+                } else {
+                  new Notification(title, { 
+                    body: body,
+                    icon: data.bookCover || '/favicon.ico',
+                    requireInteraction: true
+                  })
+                }
               }
             }
           }
@@ -221,11 +231,19 @@ onMounted(() => {
           if (!window.overdueNotifiedSet.has(req.id)) {
             window.overdueNotifiedSet.add(req.id)
             
-            new Notification("Tenggat Waktu Pengembalian! ⏰", {
+            const notifTitle = "Tenggat Waktu Pengembalian! ⏰"
+            const notifOptions = {
               body: `Waktu peminjaman buku "${req.bookTitle}" telah habis. Segera kembalikan ke perpustakaan!`,
               icon: req.bookCover || '/favicon.ico',
               requireInteraction: true
-            })
+            }
+            if ('serviceWorker' in navigator) {
+              navigator.serviceWorker.ready.then(registration => {
+                registration.showNotification(notifTitle, notifOptions)
+              })
+            } else {
+              new Notification(notifTitle, notifOptions)
+            }
           }
         }
       }
