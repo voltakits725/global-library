@@ -109,9 +109,9 @@ const book = ref(null)
 const isLoading = ref(true)
 const isSubmitting = ref(false)
 
-const returnDate = ref('')
-const returnTime = ref('15:00')
 const today = ref(new Date().toISOString().split('T')[0])
+const returnDate = ref(today.value)
+const returnTime = ref('15:00')
 
 const currentUser = ref(null)
 const userProfile = ref(null)
